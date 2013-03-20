@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.paint.*?>
+<?scenebuilder-preview-i18n-resource AlertDialog.properties?>
+
+<AnchorPane id="AnchorPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="100.0" minWidth="300.0" prefHeight="170.0" prefWidth="500.0" rotate="0.0" xmlns:fx="http://javafx.com/fxml">
+  <children>
+    <ImageView fitHeight="60.0" fitWidth="60.0" layoutX="14.0" layoutY="26.0" pickOnBounds="true" preserveRatio="true">
+      <image>
+        <Image url="@AlertDialog.png" />
+      </image>
+    </ImageView>
+    <Button id="okButton" defaultButton="true" minWidth="80.0" mnemonicParsing="false" onAction="#handleOkButton" text="%button.ok" AnchorPane.bottomAnchor="9.0" AnchorPane.rightAnchor="14.0" />
+    <TextArea id="alertText" fx:id="alertTextArea" editable="false" focusTraversable="false" minWidth="30.0" prefHeight="103.0" prefWidth="401.0" wrapText="true" AnchorPane.bottomAnchor="53.0" AnchorPane.leftAnchor="85.0" AnchorPane.rightAnchor="14.0" AnchorPane.topAnchor="14.0" />
+  </children>
+</AnchorPane>

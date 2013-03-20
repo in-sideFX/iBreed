@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+
+<html>
+    <head>
+        <style type="text/css">
+            #divTarget {width:350px;height:70px;padding:10px;border:1px solid #aaaaaa;}
+        </style>
+        <script type="text/javascript">
+
+            // Dialogs handlers
+            document.callAlert = function callAlert() {
+                alert("I'm an alert...");
+            }
+            document.callPrompt = function callPrompt() {
+                var answer = prompt("I'm a Prompt...", "Default input text");
+            }
+            document.callConfirm = function callPrompt() {
+                var answer = confirm("I'm a confirm dialog...");
+            }
+
+            // Drag an drop
+            function allowDrop(ev)
+            {
+                ev.preventDefault();
+                window.status = "Drag over webview";
+            }
+
+            function drag(ev)
+            {
+                ev.dataTransfer.setData("text/plain", ev.target.id);
+                ev.dataTransfer.effectAllowed = 'move';
+                ev.target.style.opacity = '0.4';  // Add a drag effect on source object
+
+                // Drag image (feedback), not yet supported by JavaFX WebView
+                // var dragIcon = document.createElement('img');
+                // dragIcon.src = 'up_64.png';
+                // dragIcon.width=100;
+                //ev.dataTransfer.setDragImage(dragIcon,-10,-10);
+                window.status = "Drag of " + target.id + " initiated";
+            }
+
+            function drop(ev)
+            {
+                ev.preventDefault();
+                var data = ev.dataTransfer.getData("text/plain");
+                var element = document.getElementById(data);
+
+                if (element) {
+                    ev.target.appendChild(element);
+                    window.status = "Drop of element " + data + " done.";
+                }
+                else {
+                    alert("Drop of unknown element" + data);
+                }
+            }
+            function dragEnd(ev)
+            {
+                var data = ev.dataTransfer.getData("text/plain");
+                var element = document.getElementById(data);
+                // Remove drag effect
+                ev.target.style.opacity = '1';
+                window.status = "Drag end.";
+            }
+        </script>	
+    </head>
+    <body>
+        <p>#1 Dialogs</p>
+        Examples of built-in dialogs handlers
+        <div>
+            <button type="button"  onclick="callPrompt();">Prompt</button>
+            <button type="button"  onclick="callConfirm();">Confirm</button>
+            <button type="button"  onclick="callAlert();">Alert</button>
+        </div>
+        <br>
+        <p>#2 Native html5 drag and drop</p>
+        
+        <br>
+        <div id="divTarget" ondrop="drop(event);" ondragover="allowDrop(event);"></div>
+        <br>
+        <img id="imageID" src="up_64.png" draggable="true" ondragstart="drag(event);" ondragend="dragEnd(event)" width="64" height="64">
+        Drag the arrow above into the rectangle
+    </body>
+</html>
