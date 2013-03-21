@@ -31,6 +31,8 @@ import com.sun.webpane.webkit.JSObject;
 import insidefx.ibreed.alert.AlertDialog;
 import insidefx.ibreed.confirm.ConfirmDialog;
 import insidefx.ibreed.prompt.PromptDialog;
+import insidefx.undecorator.Undecorator;
+import insidefx.undecorator.UndecoratorScene;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.concurrent.Worker;
@@ -65,14 +67,14 @@ public class WebViewInjector {
             @Override
             public void changed(ObservableValue<? extends EventHandler<? super DragEvent>> ov, EventHandler<? super DragEvent> t0, EventHandler<? super DragEvent> t) {
                 // Avoid to catch html5 dnd gestures
-                if (((DragEvent)t).getSource() != webView) {
-                    String url = ((DragEvent)t).getDragboard().getUrl();
+                if (((DragEvent) t).getSource() != webView) {
+                    String url = ((DragEvent) t).getDragboard().getUrl();
                     if (url != null) {
                         webEngine.load(url.toString());
                     }
                 }
             }
-        }); 
+        });
 
         webEngine.setConfirmHandler(new Callback<String, Boolean>() {
             @Override
@@ -132,8 +134,16 @@ public class WebViewInjector {
             @Override
             public void handle(WebEvent<javafx.geometry.Rectangle2D> ev) {
                 Rectangle2D r = ev.getData();
-                stage.setWidth(r.getWidth());
-                stage.setHeight(r.getHeight());
+                if (stage.getScene() instanceof UndecoratorScene) {
+                    // Undecorator adds borders for shadow and resize
+                    Undecorator undecorator = ((UndecoratorScene) stage.getScene()).getUndecorator();
+                    int shadowBorderSize = undecorator.getShadowBorderSize();
+                    stage.setWidth(r.getWidth() + shadowBorderSize);
+                    stage.setHeight(r.getHeight() + shadowBorderSize);
+                } else {
+                    stage.setWidth(r.getWidth());
+                    stage.setHeight(r.getHeight());
+                }
             }
         });
 

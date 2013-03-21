@@ -31,6 +31,9 @@ import insidefx.undecorator.Undecorator;
 import insidefx.undecorator.UndecoratorScene;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javafx.animation.FadeTransition;
+import javafx.animation.FadeTransitionBuilder;
+import javafx.animation.Timeline;
 import javafx.application.Application;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -40,10 +43,12 @@ import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.TextField;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
 import javafx.scene.web.WebView;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
+import javafx.util.Duration;
 
 /**
  * Why? Reuse instead of rewriting. Leverage JavaFX platform (desktop
@@ -60,6 +65,7 @@ public class IBreed extends Application {
     private TextField urlTxt;
     UndecoratorScene undecoratorScene;
     public static final Logger LOGGER = Logger.getLogger("iBreed");
+    private FadeTransition fadeInTransition, fadeOutTransition;
 
     @Override
     public void start(final Stage stage) throws Exception {
@@ -108,9 +114,11 @@ public class IBreed extends Application {
         }
         stage.show();
     }
+
     /**
      * Customize the user interface
-     * @param stage 
+     *
+     * @param stage
      */
     public void initUI(Stage stage) {
         WebViewInjector.customize(stage, webView);
@@ -131,10 +139,43 @@ public class IBreed extends Application {
                 }
             }
         });
+
+        // Manage URL Textfield visibility
+        urlTxt.setOpacity(0);
+
+        urlTxt.setOnMouseEntered(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent t) {
+                fadeInTransition = FadeTransitionBuilder.create()
+                        .duration(Duration.millis(200))
+                        .node(urlTxt)
+                        .fromValue(urlTxt.getOpacity())
+                        .toValue(1)
+                        .cycleCount(1)
+                        .autoReverse(false)
+                        .build();
+                fadeInTransition.play();
+            }
+        });
+        urlTxt.setOnMouseExited(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent t) {
+                fadeOutTransition = FadeTransitionBuilder.create()
+                        .duration(Duration.millis(600))
+                        .node(urlTxt)
+                        .fromValue(urlTxt.getOpacity())
+                        .toValue(0)
+                        .cycleCount(1)
+                        .autoReverse(false)
+                        .build();
+                fadeOutTransition.play();
+            }
+        });
     }
 
     /**
      * If user enter new url
+     *
      * @param event
      */
     @FXML
