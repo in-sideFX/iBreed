@@ -13,7 +13,7 @@
             function callPrompt() {
                 var answer = prompt("I'm a Prompt...", "Default input text");
             }
-            function callConfirm() {
+            function callPrompt() {
                 var answer = confirm("I'm a confirm dialog...");
             }
 
@@ -21,7 +21,7 @@
             function callJavaFX() {
                 // If JS to Java bridge exists...
                 if (toJava) {
-                    toJava.sendFromJS("Message from HTML button to JavaFX: " + new Date());
+                    toJava.sendFromJS("Message from HTML button to JavaFX: "+new Date());
                 }
             }
 
@@ -34,34 +34,35 @@
 
             function drag(ev)
             {
-                // Transfer the imae origin
-                ev.dataTransfer.setData("text/plain", ev.target.src);
-                ev.dataTransfer.effectAllowed = 'copy';
+                ev.dataTransfer.setData("text/plain", ev.target.id);
+               
+                ev.dataTransfer.effectAllowed = 'move';
                 ev.target.style.opacity = '0.4';  // Add a drag effect on source object
-
                 // Drag image (feedback), not yet supported by JavaFX WebView
                 // var dragIcon = document.createElement('img');
                 // dragIcon.src = 'up_64.png';
                 // dragIcon.width=100;
                 //ev.dataTransfer.setDragImage(dragIcon,-10,-10);
-                window.status = "Drag of " + ev.target.src + " initiated";
+                window.status = "Drag of " + ev.target.id + " initiated";
             }
 
             function drop(ev)
             {
                 ev.preventDefault();
                 var data = ev.dataTransfer.getData("text/plain");
+                var element = document.getElementById(data);
 
-                window.status = "Drop of an image "+data;
-                try {
-                    var img = new Image();
-                    img.src=data;
-                    img.width=64;
-                    img.height= 64;
-                    img.draggable=false;
-                    ev.target.appendChild(img);
-                } catch (e) {
-                    window.status = e.toString();
+                if (element) {
+                    ev.target.appendChild(element);
+                    window.status = "Drop of element " + data + " done.";
+
+                }
+                else {
+                    window.status = "Drop of an image coming from JavaFX";
+                    element=document.create("img");
+                    element.src=data;
+                    ev.target.appendChild(element);
+
                 }
             }
             function dragEnd(ev)

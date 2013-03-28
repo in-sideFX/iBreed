@@ -29,11 +29,13 @@ package insidefx.ibreed;
 
 import insidefx.undecorator.Undecorator;
 import insidefx.undecorator.UndecoratorScene;
+import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.animation.FadeTransition;
 import javafx.animation.FadeTransitionBuilder;
-import javafx.animation.Timeline;
 import javafx.application.Application;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -42,8 +44,13 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
+import javafx.scene.input.ClipboardContent;
+import javafx.scene.input.DragEvent;
+import javafx.scene.input.Dragboard;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.input.TransferMode;
 import javafx.scene.layout.Pane;
 import javafx.scene.web.WebView;
 import javafx.stage.Stage;
@@ -52,8 +59,10 @@ import javafx.util.Duration;
 
 /**
  * Why? Reuse instead of rewriting. Leverage JavaFX platform (desktop
- * integration, file system, back-end, frameworks...) and HTML5 universal
- * content.
+ * integration, file system, back-end, frameworks, swipe gestures...) and HTML5
+ * universal content. 
+ * TODO: Programmatically get CSS value (images url...) for
+ * dnd. Avoid selection in webview
  *
  * @author arnaud nouard (In-SideFX blog)
  */
@@ -63,6 +72,9 @@ public class IBreed extends Application {
     private WebView webView;
     @FXML
     private TextField urlTxt;
+    @FXML
+    private Label dragMeFX;
+    
     UndecoratorScene undecoratorScene;
     public static final Logger LOGGER = Logger.getLogger("iBreed");
     private FadeTransition fadeInTransition, fadeOutTransition;
@@ -83,6 +95,7 @@ public class IBreed extends Application {
         undecoratorScene = new UndecoratorScene(stage, root);
         undecoratorScene.setFadeInTransition();
         initUI(stage);
+        stage.setTitle("iBreed");
         stage.setScene(undecoratorScene);
         stage.sizeToScene();
         stage.toFront();
@@ -121,7 +134,15 @@ public class IBreed extends Application {
      * @param stage
      */
     public void initUI(Stage stage) {
-        WebViewInjector.customize(stage, webView);
+        // The generic object for JS and JavaFX interop
+        JavaScriptBridge javaScriptBridge = new JavaScriptBridge(webView.getEngine());
+
+        // WebView customization (handlers...)
+        WebViewInjector.customize(stage, webView, javaScriptBridge);
+
+        // Hide URL textfield on main UI if needed
+        urlTxt.setVisible(!Boolean.getBoolean("ibreed.hideURL"));
+
 
         //webView.getEngine().load("file:///C:/work/dev/BootMetro/bootmetro-0.6.0/hub.html");
         // Default URL to load
@@ -136,6 +157,10 @@ public class IBreed extends Application {
                     Worker.State oldState, Worker.State newState) {
                 if (newState == Worker.State.SUCCEEDED) {
                     urlTxt.setText(webView.getEngine().getLocation());
+                    urlTxt.setStyle("-fx-background-color:white;;-fx-border-color: #bababa;-fx-border-width: 2px;-fx-border-style: solid;");
+                    // urlTxt.setStyle("-fx-background-color:white;");
+                } else if (newState == Worker.State.FAILED) {
+                    urlTxt.setStyle("-fx-background-color:red;");
                 }
             }
         });
@@ -171,6 +196,45 @@ public class IBreed extends Application {
                 fadeOutTransition.play();
             }
         });
+        urlTxt.setOnMouseMoved(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent t) {
+                if (urlTxt.getOpacity() != 1) {
+                    urlTxt.setOpacity(1);
+                }
+            }
+        });
+    }
+
+    @FXML
+    private void handleDragDetected(MouseEvent event) {
+        System.err.println(event);
+        event.setDragDetect(true);
+        Dragboard startDragAndDrop = dragMeFX.startDragAndDrop(TransferMode.COPY);
+        ClipboardContent clipboardContent = new ClipboardContent();
+        URI toURI;
+        try {
+            toURI = getClass().getResource("up_64_FX.png").toURI();
+            //clipboardContent.putImage(new Image(toURI.toString()));
+            //clipboardContent.putUrl(toURI.toURL().toExternalForm());
+            clipboardContent.putString(toURI.toURL().toExternalForm());
+            startDragAndDrop.setContent(clipboardContent);
+        } catch (URISyntaxException | MalformedURLException ex) {
+            LOGGER.log(Level.SEVERE, "Drag init failed", ex);
+        }
+
+        event.consume();
+    }
+
+    @FXML
+    private void handleDragDropped(DragEvent event) {
+        System.err.println(event);
+    }
+
+    @FXML
+    private void handleOnMouseDragged(MouseEvent event) {
+        // Do nothing onthis draggable node: to avoid the stage to be dragged
+        event.consume();
     }
 
     /**

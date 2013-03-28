@@ -39,6 +39,7 @@ import javafx.concurrent.Worker;
 import javafx.event.EventHandler;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.input.DragEvent;
+import javafx.scene.text.FontSmoothingType;
 import javafx.scene.web.PopupFeatures;
 import javafx.scene.web.PromptData;
 import javafx.scene.web.WebEngine;
@@ -54,9 +55,11 @@ import javafx.util.Callback;
  */
 public class WebViewInjector {
 
-    public static void customize(final Stage stage, final WebView webView) {
+    public static void customize(final Stage stage, final WebView webView, final JavaScriptBridge js2JavaBridge) {
+        // Default settings
         webView.setContextMenuEnabled(false);
         webView.setVisible(false);
+        webView.setFontSmoothingType(FontSmoothingType.LCD);
 
         // Disable menu
         final WebEngine webEngine = webView.getEngine();
@@ -120,7 +123,7 @@ public class WebViewInjector {
         webEngine.setOnStatusChanged(new EventHandler<WebEvent<String>>() {
             @Override
             public void handle(WebEvent<String> t) {
-                System.err.println(t.toString());
+                System.out.println(t.toString());
             }
         });
         /*
@@ -156,13 +159,27 @@ public class WebViewInjector {
             public void changed(ObservableValue<? extends Worker.State> ov,
                     Worker.State oldState, Worker.State newState) {
                 if (newState == Worker.State.SUCCEEDED) {
-                    // Inject Java Script to Java bridge object
-                    JSObject win =
-                            (JSObject) webEngine.executeScript("window");
-                    //  win.setMember("js2j", new JavaScriptBridge());
-                    webView.setVisible(true);
+                    if (js2JavaBridge != null) {
+                        // Inject Java Script to Java bridge object
+                        JSObject win = (JSObject) webEngine.executeScript("window");
+                        win.setMember("toJava", js2JavaBridge);
+
+                        //  Errors management
+                        if (win.getMember("onerror") == null) {
+                            webEngine.executeScript("window.onerror=function(e) { window.status=e;}");
+                        }
+                        webView.setVisible(true);
+                    }
                 }
             }
         });
+
+        Thread.setDefaultUncaughtExceptionHandler(new Thread.UncaughtExceptionHandler() {
+            @Override
+            public void uncaughtException(Thread t, Throwable e) {
+                e.printStackTrace();
+            }
+        });
+
     }
 }

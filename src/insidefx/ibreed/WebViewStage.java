@@ -20,8 +20,8 @@ public class WebViewStage extends BasicStage {
         show();
     }
 
-    public void initUI() {
-        WebViewInjector.customize(this, webView);
+    protected void initUI() {
+        WebViewInjector.customize(this, webView, null);
     }
 
     public WebView getWebView() {

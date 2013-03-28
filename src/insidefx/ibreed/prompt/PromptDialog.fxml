@@ -15,7 +15,7 @@
         <Image url="@../alert/AlertDialog.png" />
       </image>
     </ImageView>
-    <Button id="okButton" defaultButton="true" minWidth="80.0" mnemonicParsing="false" onAction="#handleOkButton" text="%button.ok" AnchorPane.bottomAnchor="9.0" AnchorPane.rightAnchor="14.0" />
+    <Button id="okButton" cancelButton="true" defaultButton="true" minWidth="80.0" mnemonicParsing="false" onAction="#handleOkButton" text="%button.ok" AnchorPane.bottomAnchor="9.0" AnchorPane.rightAnchor="14.0" />
     <TextArea id="alertText" fx:id="promptTextArea" editable="true" focusTraversable="false" minWidth="30.0" prefHeight="77.0" prefWidth="401.0" wrapText="true" AnchorPane.bottomAnchor="53.0" AnchorPane.leftAnchor="85.0" AnchorPane.rightAnchor="14.0" AnchorPane.topAnchor="40.0" />
     <Label fx:id="label" layoutX="85.0" layoutY="14.0" prefWidth="400.0" text="Label" />
   </children>
