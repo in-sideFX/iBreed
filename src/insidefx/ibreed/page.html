@@ -2,12 +2,40 @@
 
 <html>
     <head>
+        <link href="http://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700" rel="stylesheet" type="text/css">
         <style type="text/css">
-            #dropTarget {width:80%;height:70px;padding:10px;border:1px dashed #aaaaaa;}
+            #dropTarget {width:80%;height:80%;min-height:50px;margin: 0px;padding:10px;border:1px dashed #aaaaaa;}
+
+            /* No text selection allowed in this hybrid application*/
+            body{
+                -webkit-touch-callout: none;
+                -webkit-user-select: none;
+                -khtml-user-select: none;
+                -moz-user-select: none;
+                -ms-user-select: none;
+                user-select: none;
+
+                font-family: "Open Sans", Arial, Helvetica, Sans-Serif;
+            }
+            h3{
+                font-weight: 300;
+                font-size: 20px;
+                line-height: 34px;
+                -webkit-margin-before: 0em;
+                -webkit-margin-after: 0em;
+            }
+            h4{
+                font-weight: 300;
+                font-size: 14px;
+                line-height: 34px;
+                -webkit-margin-before: 0em;
+                -webkit-margin-after: 0em;
+            }
         </style>
         <script type="text/javascript">
             // Dialogs handlers
             function callAlert() {
+                //document.body.style.font-Family ='"Segoe UI", Helvetica, Arial, sans-serif';
                 alert("I'm an alert...");
             }
             function callPrompt() {
@@ -15,14 +43,6 @@
             }
             function callConfirm() {
                 var answer = confirm("I'm a confirm dialog...");
-            }
-
-            // JS to Java 
-            function callJavaFX() {
-                // If JS to Java bridge exists...
-                if (toJava) {
-                    toJava.sendFromJS("Message from HTML button to JavaFX: " + new Date());
-                }
             }
 
             // Drag an drop
@@ -52,13 +72,13 @@
                 ev.preventDefault();
                 var data = ev.dataTransfer.getData("text/plain");
 
-                window.status = "Drop of an image "+data;
+                window.status = "Drop of an image " + data;
                 try {
                     var img = new Image();
-                    img.src=data;
-                    img.width=64;
-                    img.height= 64;
-                    img.draggable=false;
+                    img.src = data;
+                    img.width = 64;
+                    img.height = 64;
+                    img.draggable = false;
                     ev.target.appendChild(img);
                 } catch (e) {
                     window.status = e.toString();
@@ -72,24 +92,46 @@
                 ev.target.style.opacity = '1';
                 window.status = "Drag end.";
             }
+            // Send to Java
+            function sendToJava() {
+                // If JS to Java bridge exists...
+                if (window.toJava) {
+                    window.toJava.sendFromJS("Message from HTML to JavaFX: " + new Date());
+                }
+            }
+            function sentFromJava(str) {
+                // If JS to Java bridge exists...
+                var field = document.getElementById("fromJava");
+                field.value = str;
+            }
         </script>	
     </head>
-    <body style="width:90%;height:90%">
-        <p>#1 Test: Dialogs section</p>
-        Examples of built-in dialogs handlers
-        <div>
+    <body style="width:90%;height:90%;">
+        <h3>#1 Dialogs section</h3>
+        <h4>Built-in dialogs handlers</h4>
+        <div id="toto">
             <button type="button"  onclick="callPrompt();">Prompt</button>
             <button type="button"  onclick="callConfirm();">Confirm</button>
             <button type="button"  onclick="callAlert();">Alert</button>
-            <button type="button"  onclick="callJavaFX();">Call JavaFX</button>
         </div>
         <br>
-        <p>#2 Test: Native html5 drag and drop section</p>
-
+        <h3>#2 Native html5/JavaFX drag and drop</h3>
+        <table style="width:90%;height:90%;">
+            <tr> 
+                <td style="width:10%;">
+                    <img id="imageID" src="up_64.png" draggable="true" ondragstart="drag(event);" ondragend="dragEnd(event)" width="64" height="64">
+                </td>
+                <td style="width:90%;">
+                    <div id="dropTarget" ondrop="drop(event);" ondragover="allowDrop(event);"></div>
+                </td>
+            </tr>
+        </table>
         <br>
-        <div id="dropTarget" ondrop="drop(event);" ondragover="allowDrop(event);"></div>
-        <br>
-        <img id="imageID" src="up_64.png" draggable="true" ondragstart="drag(event);" ondragend="dragEnd(event)" width="64" height="64">
         Drag the green arrow into the rectangle
+        <h3>#3 JavaScript to Java</h3>
+        <input size="60" onkeyup="sendToJava();" value="Write a character into this field!" />
+        <h3>#4 Java to JavaScript</h3>
+        <input size="60" id="fromJava" value="" />
+
     </body>
 </html>

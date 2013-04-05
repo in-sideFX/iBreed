@@ -39,6 +39,7 @@ import javafx.concurrent.Worker;
 import javafx.event.EventHandler;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.input.DragEvent;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.text.FontSmoothingType;
 import javafx.scene.web.PopupFeatures;
 import javafx.scene.web.PromptData;
@@ -173,13 +174,5 @@ public class WebViewInjector {
                 }
             }
         });
-
-        Thread.setDefaultUncaughtExceptionHandler(new Thread.UncaughtExceptionHandler() {
-            @Override
-            public void uncaughtException(Thread t, Throwable e) {
-                e.printStackTrace();
-            }
-        });
-
     }
 }

@@ -32,10 +32,13 @@ import insidefx.undecorator.UndecoratorScene;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.Calendar;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.animation.FadeTransition;
 import javafx.animation.FadeTransitionBuilder;
+import javafx.animation.FillTransition;
+import javafx.animation.FillTransitionBuilder;
 import javafx.application.Application;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -44,6 +47,7 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.input.ClipboardContent;
@@ -52,17 +56,20 @@ import javafx.scene.input.Dragboard;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.TransferMode;
 import javafx.scene.layout.Pane;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.Rectangle;
 import javafx.scene.web.WebView;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 import javafx.util.Duration;
 
 /**
- * Why? Reuse instead of rewriting. Leverage JavaFX platform (desktop
- * integration, file system, back-end, frameworks, swipe gestures...) and HTML5
- * universal content. 
- * TODO: Programmatically get CSS value (images url...) for
- * dnd. Avoid selection in webview
+ *
+ *
+ *
+ * TODO: Programmatically get CSS value (images url...) for dnd. 
+ * Double click sur webview (pas fait sur Master?). Exec Jar avec
+ * 2 jar... Améliorer la page HTML Le CSS du URL textfield
  *
  * @author arnaud nouard (In-SideFX blog)
  */
@@ -74,11 +81,16 @@ public class IBreed extends Application {
     private TextField urlTxt;
     @FXML
     private Label dragMeFX;
+    @FXML
+    private Rectangle rectKeyUp;
+    @FXML
+    private Button btnHit;
     
     UndecoratorScene undecoratorScene;
     public static final Logger LOGGER = Logger.getLogger("iBreed");
     private FadeTransition fadeInTransition, fadeOutTransition;
-
+    JavaScriptBridge javaScriptBridge;
+ 
     @Override
     public void start(final Stage stage) throws Exception {
         Pane root = null;
@@ -135,7 +147,28 @@ public class IBreed extends Application {
      */
     public void initUI(Stage stage) {
         // The generic object for JS and JavaFX interop
-        JavaScriptBridge javaScriptBridge = new JavaScriptBridge(webView.getEngine());
+        javaScriptBridge = new JavaScriptBridge(webView.getEngine());
+        javaScriptBridge.fromJSProperty.addListener(new ChangeListener<String>() {
+            FillTransition fillTransition;
+
+            @Override
+            public void changed(ObservableValue<? extends String> ov, String t, String t1) {
+                // Something happened on JS side, so show it!
+                if (fillTransition != null) {
+                    fillTransition.playFromStart();
+                } else {
+                    fillTransition = FillTransitionBuilder.create()
+                            .shape(rectKeyUp)
+                            .duration(Duration.millis(25))
+                            .cycleCount(2)
+                            .fromValue((Color) rectKeyUp.getFill())
+                            .toValue(Color.GREEN)
+                            .autoReverse(true)
+                            .build();
+                    fillTransition.play();
+                }
+            }
+        });
 
         // WebView customization (handlers...)
         WebViewInjector.customize(stage, webView, javaScriptBridge);
@@ -204,19 +237,30 @@ public class IBreed extends Application {
                 }
             }
         });
+        dragMeFX.setOnDragDropped(new EventHandler<DragEvent>() {
+            @Override
+            public void handle(DragEvent t) {
+                dragMeFX.setOpacity(1); // Remove drag effect
+
+            }
+        });
+        dragMeFX.setOnDragDone(new EventHandler<DragEvent>() {
+            @Override
+            public void handle(DragEvent t) {
+                dragMeFX.setOpacity(1); // Remove drag effect
+            }
+        });
     }
 
     @FXML
     private void handleDragDetected(MouseEvent event) {
-        System.err.println(event);
         event.setDragDetect(true);
         Dragboard startDragAndDrop = dragMeFX.startDragAndDrop(TransferMode.COPY);
         ClipboardContent clipboardContent = new ClipboardContent();
+        dragMeFX.setOpacity(0.4); // Drag effect
         URI toURI;
         try {
             toURI = getClass().getResource("up_64_FX.png").toURI();
-            //clipboardContent.putImage(new Image(toURI.toString()));
-            //clipboardContent.putUrl(toURI.toURL().toExternalForm());
             clipboardContent.putString(toURI.toURL().toExternalForm());
             startDragAndDrop.setContent(clipboardContent);
         } catch (URISyntaxException | MalformedURLException ex) {
@@ -228,7 +272,11 @@ public class IBreed extends Application {
 
     @FXML
     private void handleDragDropped(DragEvent event) {
-        System.err.println(event);
+        dragMeFX.setOpacity(1); // Remove drag effect
+    }
+
+    private void handleDragDone(DragEvent event) {
+        dragMeFX.setOpacity(1); // Remove drag effect
     }
 
     @FXML
@@ -246,5 +294,10 @@ public class IBreed extends Application {
     private void onUrlTxtChanged(ActionEvent event) {
         String url = urlTxt.getText();
         webView.getEngine().load(url);
+    }
+    
+    @FXML
+    private void onHitClicked(ActionEvent event) {
+        javaScriptBridge.sendToJS("sentFromJava(\"JavaFX gives time: "+Calendar.getInstance().getTime().toString()+"\")");
     }
 }

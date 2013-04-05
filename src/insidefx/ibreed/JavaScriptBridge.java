@@ -1,6 +1,7 @@
 package insidefx.ibreed;
 
 import com.sun.webpane.webkit.JSObject;
+import javafx.application.Platform;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -19,12 +20,6 @@ public class JavaScriptBridge {
         webEngine=we;
         
         fromJSProperty = new SimpleStringProperty(fromJS);
-        fromJSProperty.addListener(new ChangeListener<String>() {
-            @Override
-            public void changed(ObservableValue<? extends String> ov, String t, String t1) {
-                System.out.println(t1);
-            }
-        });
     }
 
     /**
@@ -41,9 +36,9 @@ public class JavaScriptBridge {
      * @param jsToExecute
      * @return the returned value from JavaScript if any
      */
-    public JSObject sendToJS(String jsToExecute) {
+    public Object sendToJS(String jsToExecute) {
 
-        JSObject jsObject = (JSObject) webEngine.executeScript(jsToExecute);
-        return jsObject;
+        Object obj = webEngine.executeScript(jsToExecute);
+        return obj;
     }
 }

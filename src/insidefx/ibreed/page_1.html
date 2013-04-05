@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+
+<html>
+    <head>
+        <style type="text/css">
+            #dropTarget {width:90%;height:80%;min-height:50px;padding:10px;border:1px dashed #aaaaaa;}
+
+            /* No text selection allowed in this hybrid application*/
+            *{
+                -webkit-touch-callout: none;
+                -webkit-user-select: none;
+                -khtml-user-select: none;
+                -moz-user-select: none;
+                -ms-user-select: none;
+                user-select: none;
+            }·
+        </style>
+        <script type="text/javascript">
+            // Dialogs handlers
+            function callAlert() {
+                //document.body.style.font-Family ='"Segoe UI", Helvetica, Arial, sans-serif';
+                alert("I'm an alert...");
+            }
+            function callPrompt() {
+                var answer = prompt("I'm a Prompt...", "Default input text");
+            }
+            function callConfirm() {
+                var answer = confirm("I'm a confirm dialog...");
+            }
+
+            // JS to Java 
+            function callJavaFX() {
+                // If JS to Java bridge exists...
+                if (toJava) {
+                    toJava.sendFromJS("Message from HTML button to JavaFX: " + new Date());
+                }
+            }
+
+            // Drag an drop
+            function allowDrop(ev)
+            {
+                ev.preventDefault();
+                //window.status = "Drag over this drop container";
+            }
+
+            function drag(ev)
+            {
+                // Transfer the imae origin
+                ev.dataTransfer.setData("text/plain", ev.target.src);
+                ev.dataTransfer.effectAllowed = 'copy';
+                ev.target.style.opacity = '0.4';  // Add a drag effect on source object
+
+                // Drag image (feedback), not yet supported by JavaFX WebView
+                // var dragIcon = document.createElement('img');
+                // dragIcon.src = 'up_64.png';
+                // dragIcon.width=100;
+                //ev.dataTransfer.setDragImage(dragIcon,-10,-10);
+                window.status = "Drag of " + ev.target.src + " initiated";
+            }
+
+            function drop(ev)
+            {
+                ev.preventDefault();
+                var data = ev.dataTransfer.getData("text/plain");
+
+                window.status = "Drop of an image " + data;
+                try {
+                    var img = new Image();
+                    img.src = data;
+                    img.width = 64;
+                    img.height = 64;
+                    img.draggable = false;
+                    ev.target.appendChild(img);
+                } catch (e) {
+                    window.status = e.toString();
+                }
+            }
+            function dragEnd(ev)
+            {
+                var data = ev.dataTransfer.getData("text/plain");
+                var element = document.getElementById(data);
+                // Remove drag effect
+                ev.target.style.opacity = '1';
+                window.status = "Drag end.";
+            }
+            // Send to Java
+            function sendToJava() {
+               // window.toJava.sendFromJS("Key up");
+            }
+        </script>	
+    </head>
+    <body style="width:90%;height:90%;font-Family:'Segoe UI', 'Open Sans', Helvetica, Arial, sans-serif">
+        <h3>#1 Test: Dialogs section</h3>
+        <h4>Examples of built-in dialogs handlers</h4>
+        <div id="toto">
+            <button type="button"  onclick="callPrompt();">Prompt</button>
+            <button type="button"  onclick="callConfirm();">Confirm</button>
+            <button type="button"  onclick="callAlert();">Alert</button>
+            <button type="button"  onclick="callJavaFX();">Call JavaFX</button>
+        </div>
+        <br>
+        <h3>#2 Test: Native html5 drag and drop section</h3>
+
+        <br>
+        <div id="dropTarget" ondrop="drop(event);" ondragover="allowDrop(event);"></div>
+        <br>
+        <img id="imageID" src="up_64.png" draggable="true" ondragstart="drag(event);" ondragend="dragEnd(event)" width="64" height="64">
+        Drag the green arrow into the rectangle
+        <h3>#3 Test: JavaScript to Java</h3>
+        <input size="40" value="Write a character into this field!" />
+        <textarea></textarea>
+    </body>
+</html>
