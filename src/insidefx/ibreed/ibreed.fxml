@@ -21,14 +21,6 @@
   <left>
     <VBox prefHeight="200.0" prefWidth="100.0" BorderPane.alignment="TOP_CENTER">
       <children>
-        <Label fx:id="dragMeFX" alignment="CENTER_RIGHT" maxHeight="64.0" maxWidth="128.0" onDragDetected="#handleDragDetected" onDragDone="#handleDragDone" onDragDropped="#handleDragDropped" onMouseDragged="#handleOnMouseDragged" prefHeight="64.0" prefWidth="128.0" styleClass="dragme-button" text="Drag Me!" textAlignment="LEFT" VBox.vgrow="NEVER">
-          <stylesheets>
-            <URL value="@ibreed.css" />
-          </stylesheets>
-          <VBox.margin>
-            <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" fx:id="x1" />
-          </VBox.margin>
-        </Label>
         <Rectangle fx:id="rectKeyUp" arcHeight="16.0" arcWidth="200.0" fill="WHITE" height="40.0" smooth="true" stroke="BLACK" strokeType="INSIDE" width="50.0" VBox.vgrow="NEVER">
           <VBox.margin>
             <Insets bottom="5.0" left="20.0" right="5.0" top="5.0" />
@@ -39,6 +31,14 @@
             <Insets bottom="5.0" left="20.0" right="5.0" top="5.0" />
           </VBox.margin>
         </Button>
+        <Label fx:id="dragMeFX" alignment="CENTER_RIGHT" maxHeight="64.0" maxWidth="128.0" onDragDetected="#handleDragDetected" onDragDone="#handleDragDone" onDragDropped="#handleDragDropped" onMouseDragged="#handleOnMouseDragged" prefHeight="64.0" prefWidth="128.0" styleClass="dragme-button" text="Drag Me!" textAlignment="LEFT" VBox.vgrow="NEVER">
+          <stylesheets>
+            <URL value="@ibreed.css" />
+          </stylesheets>
+          <VBox.margin>
+            <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" fx:id="x1" />
+          </VBox.margin>
+        </Label>
       </children>
     </VBox>
   </left>

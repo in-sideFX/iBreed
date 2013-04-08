@@ -27,19 +27,18 @@
  */
 package insidefx.ibreed;
 
-import com.sun.webpane.webkit.JSObject;
 import insidefx.ibreed.alert.AlertDialog;
 import insidefx.ibreed.confirm.ConfirmDialog;
 import insidefx.ibreed.prompt.PromptDialog;
 import insidefx.undecorator.Undecorator;
 import insidefx.undecorator.UndecoratorScene;
+import java.util.logging.Level;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.concurrent.Worker;
 import javafx.event.EventHandler;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.input.DragEvent;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.text.FontSmoothingType;
 import javafx.scene.web.PopupFeatures;
 import javafx.scene.web.PromptData;
@@ -48,6 +47,7 @@ import javafx.scene.web.WebEvent;
 import javafx.scene.web.WebView;
 import javafx.stage.Stage;
 import javafx.util.Callback;
+import netscape.javascript.JSObject;
 
 /**
  * WebView helper
@@ -160,16 +160,20 @@ public class WebViewInjector {
             public void changed(ObservableValue<? extends Worker.State> ov,
                     Worker.State oldState, Worker.State newState) {
                 if (newState == Worker.State.SUCCEEDED) {
+                    try{
                     if (js2JavaBridge != null) {
                         // Inject Java Script to Java bridge object
                         JSObject win = (JSObject) webEngine.executeScript("window");
                         win.setMember("toJava", js2JavaBridge);
 
-                        //  Errors management
+                        //  Errors management (optional)
                         if (win.getMember("onerror") == null) {
                             webEngine.executeScript("window.onerror=function(e) { window.status=e;}");
                         }
                         webView.setVisible(true);
+                    }
+                    }catch(Exception ex){
+                        IBreed.LOGGER.log(Level.SEVERE,"While trying to inject JS2J object",ex);
                     }
                 }
             }

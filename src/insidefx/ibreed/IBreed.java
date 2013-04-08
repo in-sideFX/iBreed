@@ -33,6 +33,7 @@ import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Calendar;
+import java.util.logging.FileHandler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.animation.FadeTransition;
@@ -40,6 +41,7 @@ import javafx.animation.FadeTransitionBuilder;
 import javafx.animation.FillTransition;
 import javafx.animation.FillTransitionBuilder;
 import javafx.application.Application;
+import static javafx.application.Application.launch;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.concurrent.Worker;
@@ -67,14 +69,15 @@ import javafx.util.Duration;
  *
  *
  *
- * TODO: Programmatically get CSS value (images url...) for dnd. 
- * Double click sur webview (pas fait sur Master?). Exec Jar avec
- * 2 jar... Améliorer la page HTML Le CSS du URL textfield
+ * TODO: Programmatically get CSS value (images url...) for dnd example. Exec
+ * Jar avec 2 jar... Améliorer la page HTML Le CSS du URL textfield. Changer
+ * icons des dialogs. Manage Focus lost pour URL textfield.Transition entre 2
+ * page du DOM.
  *
  * @author arnaud nouard (In-SideFX blog)
  */
 public class IBreed extends Application {
-
+    
     @FXML
     private WebView webView;
     @FXML
@@ -85,14 +88,16 @@ public class IBreed extends Application {
     private Rectangle rectKeyUp;
     @FXML
     private Button btnHit;
-    
     UndecoratorScene undecoratorScene;
     public static final Logger LOGGER = Logger.getLogger("iBreed");
     private FadeTransition fadeInTransition, fadeOutTransition;
     JavaScriptBridge javaScriptBridge;
- 
+    
     @Override
     public void start(final Stage stage) throws Exception {
+        FileHandler hand = new FileHandler("iBreed.log");
+        LOGGER.addHandler(hand);
+        
         Pane root = null;
         // UI part of the decoration
         try {
@@ -103,10 +108,10 @@ public class IBreed extends Application {
         } catch (Exception ex) {
             LOGGER.log(Level.SEVERE, "Root UI not found", ex);
         }
-
+        
         undecoratorScene = new UndecoratorScene(stage, root);
         undecoratorScene.setFadeInTransition();
-        initUI(stage);
+        setAsHybrid(stage);
         stage.setTitle("iBreed");
         stage.setScene(undecoratorScene);
         stage.sizeToScene();
@@ -128,7 +133,7 @@ public class IBreed extends Application {
         Undecorator undecorator = undecoratorScene.getUndecorator();
         stage.setMinWidth(undecorator.getMinWidth());
         stage.setMinHeight(undecorator.getMinHeight());
-
+        
         stage.setWidth(undecorator.getPrefWidth());
         stage.setHeight(undecorator.getPrefHeight());
         if (undecorator.getMaxWidth() > 0) {
@@ -145,12 +150,12 @@ public class IBreed extends Application {
      *
      * @param stage
      */
-    public void initUI(Stage stage) {
+    public void setAsHybrid(Stage stage) {
         // The generic object for JS and JavaFX interop
         javaScriptBridge = new JavaScriptBridge(webView.getEngine());
         javaScriptBridge.fromJSProperty.addListener(new ChangeListener<String>() {
             FillTransition fillTransition;
-
+            
             @Override
             public void changed(ObservableValue<? extends String> ov, String t, String t1) {
                 // Something happened on JS side, so show it!
@@ -179,7 +184,9 @@ public class IBreed extends Application {
 
         //webView.getEngine().load("file:///C:/work/dev/BootMetro/bootmetro-0.6.0/hub.html");
         // Default URL to load
-        String url = getClass().getResource("page.html").toString();
+        final String url = getClass().getResource("page.html").toExternalForm();
+        LOGGER.log(Level.INFO, "Loading: " + url);
+        
         webView.getEngine().load(url);
 
         // Reflect the current URL in the text field
@@ -194,13 +201,14 @@ public class IBreed extends Application {
                     // urlTxt.setStyle("-fx-background-color:white;");
                 } else if (newState == Worker.State.FAILED) {
                     urlTxt.setStyle("-fx-background-color:red;");
+                    LOGGER.log(Level.SEVERE, "Error while loading: ", url);
                 }
             }
         });
 
         // Manage URL Textfield visibility
         urlTxt.setOpacity(0);
-
+        
         urlTxt.setOnMouseEntered(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent t) {
@@ -215,20 +223,42 @@ public class IBreed extends Application {
                 fadeInTransition.play();
             }
         });
+        urlTxt.focusedProperty().addListener(new ChangeListener<Boolean>() {
+            @Override
+            public void changed(ObservableValue<? extends Boolean> ov, Boolean t, Boolean t1) {
+                if (!t1) {
+                    fadeOutTransition = FadeTransitionBuilder.create()
+                            .duration(Duration.millis(600))
+                            .node(urlTxt)
+                            .fromValue(urlTxt.getOpacity())
+                            .toValue(0)
+                            .cycleCount(1)
+                            .autoReverse(false)
+                            .build();
+                    fadeOutTransition.play();
+                }
+            }
+        });
+        
+        
         urlTxt.setOnMouseExited(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent t) {
-                fadeOutTransition = FadeTransitionBuilder.create()
-                        .duration(Duration.millis(600))
-                        .node(urlTxt)
-                        .fromValue(urlTxt.getOpacity())
-                        .toValue(0)
-                        .cycleCount(1)
-                        .autoReverse(false)
-                        .build();
-                fadeOutTransition.play();
+                if (!urlTxt.focusedProperty().get()) {
+                    fadeOutTransition = FadeTransitionBuilder.create()
+                            .duration(Duration.millis(600))
+                            .node(urlTxt)
+                            .fromValue(urlTxt.getOpacity())
+                            .toValue(0)
+                            .cycleCount(1)
+                            .autoReverse(false)
+                            .build();
+                    fadeOutTransition.play();
+                }
             }
         });
+        
+        
         urlTxt.setOnMouseMoved(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent t) {
@@ -251,7 +281,7 @@ public class IBreed extends Application {
             }
         });
     }
-
+    
     @FXML
     private void handleDragDetected(MouseEvent event) {
         event.setDragDetect(true);
@@ -266,19 +296,19 @@ public class IBreed extends Application {
         } catch (URISyntaxException | MalformedURLException ex) {
             LOGGER.log(Level.SEVERE, "Drag init failed", ex);
         }
-
+        
         event.consume();
     }
-
+    
     @FXML
     private void handleDragDropped(DragEvent event) {
         dragMeFX.setOpacity(1); // Remove drag effect
     }
-
+    
     private void handleDragDone(DragEvent event) {
         dragMeFX.setOpacity(1); // Remove drag effect
     }
-
+    
     @FXML
     private void handleOnMouseDragged(MouseEvent event) {
         // Do nothing onthis draggable node: to avoid the stage to be dragged
@@ -286,7 +316,7 @@ public class IBreed extends Application {
     }
 
     /**
-     * If user enter new url
+     * If user enters new url
      *
      * @param event
      */
@@ -298,6 +328,10 @@ public class IBreed extends Application {
     
     @FXML
     private void onHitClicked(ActionEvent event) {
-        javaScriptBridge.sendToJS("sentFromJava(\"JavaFX gives time: "+Calendar.getInstance().getTime().toString()+"\")");
+        javaScriptBridge.sendToJS("sentFromJava(\"JavaFX gives time: " + Calendar.getInstance().getTime().toString() + "\")");
+    }
+    
+    public static void main(String[] args) {
+        launch(args);
     }
 }

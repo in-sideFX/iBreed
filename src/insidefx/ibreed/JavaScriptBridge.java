@@ -1,10 +1,6 @@
 package insidefx.ibreed;
 
-import com.sun.webpane.webkit.JSObject;
-import javafx.application.Platform;
 import javafx.beans.property.SimpleStringProperty;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.scene.web.WebEngine;
 
 /**
