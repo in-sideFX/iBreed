@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import java.net.*?>
+<?import java.util.*?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.paint.*?>
+<?import javafx.scene.shape.*?>
+<?import javafx.scene.web.*?>
+
+<BorderPane id="BorderPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="450.0" minWidth="550.0" prefHeight="480.0" prefWidth="600.0" xmlns:fx="http://javafx.com/fxml">
+  <center>
+    <WebView fx:id="webView" minHeight="300.0" minWidth="300.0" prefHeight="400.0" prefWidth="640.0">
+      <BorderPane.margin>
+        <Insets bottom="10.0" left="10.0" right="10.0" top="30.0" />
+      </BorderPane.margin>
+    </WebView>
+  </center>
+  <left>
+    <VBox prefHeight="200.0" prefWidth="100.0">
+      <children>
+        <Label fx:id="dragMeFX" alignment="BOTTOM_RIGHT" contentDisplay="CENTER" graphicTextGap="4.0" maxHeight="89.0" maxWidth="128.0" onDragDetected="#handleDragDetected" onDragDone="#handleDragDone" onDragDropped="#handleDragDropped" onMouseDragged="#handleOnMouseDragged" prefHeight="89.0" prefWidth="100.0" styleClass="dragme-button" text="Drag me!" textAlignment="LEFT" />
+        <ImageView id="" fx:id="keyUp" fitHeight="64.0" fitWidth="64.0" opacity="0.24" pickOnBounds="true" preserveRatio="true" smooth="false" styleClass="keyboard">
+          <VBox.margin>
+            <Insets top="10.0" />
+          </VBox.margin>
+        </ImageView>
+        <Button id="btnHit" fx:id="btnTime" alignment="BOTTOM_RIGHT" mnemonicParsing="false" onAction="#onTimeClicked" prefHeight="89.0" prefWidth="100.0" styleClass="time-button" text="Time!">
+          <VBox.margin>
+            <Insets top="30.0" />
+          </VBox.margin>
+        </Button>
+      </children>
+      <padding>
+        <Insets top="180.0" />
+      </padding>
+      <stylesheets>
+        <URL value="@ibreed.css" />
+      </stylesheets>
+    </VBox>
+  </left>
+  <stylesheets>
+    <URL value="@ibreed.css" />
+  </stylesheets>
+  <top>
+    <TextField fx:id="urlTxt" onAction="#onUrlTxtChanged" prefWidth="200.0">
+      <BorderPane.margin>
+        <Insets left="40.0" right="100.0" />
+      </BorderPane.margin>
+    </TextField>
+  </top>
+</BorderPane>

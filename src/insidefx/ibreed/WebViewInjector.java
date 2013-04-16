@@ -27,18 +27,19 @@
  */
 package insidefx.ibreed;
 
+import demoapp.IBreed;
 import insidefx.ibreed.alert.AlertDialog;
 import insidefx.ibreed.confirm.ConfirmDialog;
 import insidefx.ibreed.prompt.PromptDialog;
 import insidefx.undecorator.Undecorator;
 import insidefx.undecorator.UndecoratorScene;
 import java.util.logging.Level;
+import java.util.logging.Logger;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.concurrent.Worker;
 import javafx.event.EventHandler;
 import javafx.geometry.Rectangle2D;
-import javafx.scene.input.DragEvent;
 import javafx.scene.text.FontSmoothingType;
 import javafx.scene.web.PopupFeatures;
 import javafx.scene.web.PromptData;
@@ -56,7 +57,9 @@ import netscape.javascript.JSObject;
  */
 public class WebViewInjector {
 
-    public static void customize(final Stage stage, final WebView webView, final JavaScriptBridge js2JavaBridge) {
+    static final Logger LOGGER = Logger.getLogger("iBreed");
+
+    public static void inject(final Stage stage, final WebView webView, final JavaScriptBridge js2JavaBridge) {
         // Default settings
         webView.setContextMenuEnabled(false);
         webView.setVisible(false);
@@ -67,18 +70,18 @@ public class WebViewInjector {
         /*
          * Drag and drop URL support
          */
-        webView.onDragDroppedProperty().addListener(new ChangeListener<EventHandler<? super DragEvent>>() {
-            @Override
-            public void changed(ObservableValue<? extends EventHandler<? super DragEvent>> ov, EventHandler<? super DragEvent> t0, EventHandler<? super DragEvent> t) {
-                // Avoid to catch html5 dnd gestures
-                if (((DragEvent) t).getSource() != webView) {
-                    String url = ((DragEvent) t).getDragboard().getUrl();
-                    if (url != null) {
-                        webEngine.load(url.toString());
-                    }
-                }
-            }
-        });
+//        webView.onDragDroppedProperty().addListener(new ChangeListener<EventHandler<? super DragEvent>>() {
+//            @Override
+//            public void changed(ObservableValue<? extends EventHandler<? super DragEvent>> ov, EventHandler<? super DragEvent> t0, EventHandler<? super DragEvent> t) {
+//                // Avoid to catch html5 dnd gestures
+//                if (((DragEvent) t).getSource() != webView) {
+//                    String url = ((DragEvent) t).getDragboard().getUrl();
+//                    if (url != null) {
+//                        webEngine.load(url.toString());
+//                    }
+//                }
+//            }
+//        });
 
         webEngine.setConfirmHandler(new Callback<String, Boolean>() {
             @Override
@@ -160,20 +163,21 @@ public class WebViewInjector {
             public void changed(ObservableValue<? extends Worker.State> ov,
                     Worker.State oldState, Worker.State newState) {
                 if (newState == Worker.State.SUCCEEDED) {
-                    try{
-                    if (js2JavaBridge != null) {
-                        // Inject Java Script to Java bridge object
-                        JSObject win = (JSObject) webEngine.executeScript("window");
-                        win.setMember("toJava", js2JavaBridge);
+                    try {
+                        if (js2JavaBridge != null) {
+                            // Inject Java Script to Java bridge object
+                            JSObject win = (JSObject) webEngine.executeScript("window");
+                            win.setMember("toJava", js2JavaBridge);
 
-                        //  Errors management (optional)
-                        if (win.getMember("onerror") == null) {
-                            webEngine.executeScript("window.onerror=function(e) { window.status=e;}");
+                            //  Errors management (optional)
+                            if (win.getMember("onerror") == null) {
+                                webEngine.executeScript("window.onerror=function(e) { window.status=e;}");
+                            }
                         }
                         webView.setVisible(true);
-                    }
-                    }catch(Exception ex){
-                        IBreed.LOGGER.log(Level.SEVERE,"While trying to inject JS2J object",ex);
+
+                    } catch (Exception ex) {
+                        LOGGER.log(Level.SEVERE, "While trying to inject JS2J object", ex);
                     }
                 }
             }

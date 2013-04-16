@@ -18,7 +18,7 @@ public class AlertDialog extends BasicStage {
     String message;
 
     public AlertDialog(Window owner, String msg) {
-        super(owner,"AlertDialog.fxml",ResourceBundle.getBundle("insidefx/ibreed/alert/AlertDialog"));
+        super(owner, "AlertDialog.fxml", ResourceBundle.getBundle("insidefx/ibreed/alert/AlertDialog"));
         message = msg;
         initUI();
     }

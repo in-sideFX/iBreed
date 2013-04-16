@@ -1,10 +1,10 @@
 package insidefx.ibreed;
 
-import static insidefx.ibreed.IBreed.LOGGER;
 import insidefx.undecorator.Undecorator;
 import insidefx.undecorator.UndecoratorScene;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
+import java.util.logging.Logger;
 import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.layout.Pane;
@@ -21,14 +21,20 @@ import javafx.stage.WindowEvent;
  */
 abstract public class BasicStage extends Stage {
 
+    final Logger LOGGER = Logger.getLogger("iBreed");
     UndecoratorScene scene;
 
     public BasicStage(final Window owner, String fxml, ResourceBundle rb) {
+        this(owner, fxml, rb, Modality.WINDOW_MODAL);
+    }
+
+    public BasicStage(final Window owner, String fxml, ResourceBundle rb, Modality modality) {
         Pane root = null;
         try {
             FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource(fxml));
-            fxmlLoader.setResources(rb);
-
+            if (rb != null) {
+                fxmlLoader.setResources(rb);
+            }
             fxmlLoader.setController(this);
             root = (Pane) fxmlLoader.load();
             root.getStylesheets().add("jfxtras/css/JMetroLightTheme.css");
@@ -38,17 +44,18 @@ abstract public class BasicStage extends Stage {
 
         scene = new UndecoratorScene(this, StageStyle.UTILITY, root, null);
         setScene(scene);
-        super.initModality(Modality.APPLICATION_MODAL);
+        super.initModality(modality);
         super.initOwner(owner);
 
         // No API to center on stage??
-        super.setOnShown(new EventHandler<WindowEvent>() {
-            @Override
-            public void handle(WindowEvent t) {
-                center(owner);
-            }
-        });
-
+        if (owner != null) {
+            super.setOnShown(new EventHandler<WindowEvent>() {
+                @Override
+                public void handle(WindowEvent t) {
+                    center(owner);
+                }
+            });
+        }
         // Set sizes based on client area's sizes
         Undecorator undecorator = scene.getUndecorator();
         setMinWidth(undecorator.getMinWidth());
@@ -65,9 +72,13 @@ abstract public class BasicStage extends Stage {
     }
 
     void center(Window owner) {
+//        if (owner != null) {
         double x = owner.getX() + (owner.getWidth() / 2) - (getWidth() / 2);
         double y = owner.getY() + (owner.getHeight() / 2) - (getHeight() / 2);
         super.setX(x);
         super.setY(y);
+//        }else{
+//            centerOnScreen();
+//        }
     }
 }

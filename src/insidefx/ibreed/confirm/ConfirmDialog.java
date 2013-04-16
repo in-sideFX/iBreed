@@ -19,7 +19,7 @@ public class ConfirmDialog extends BasicStage {
     Boolean answer;
 
     public ConfirmDialog(Window owner, String message) {
-                super(owner,"ConfirmDialog.fxml",ResourceBundle.getBundle("insidefx/ibreed/confirm/ConfirmDialog"));
+        super(owner, "ConfirmDialog.fxml", ResourceBundle.getBundle("insidefx/ibreed/confirm/ConfirmDialog"));
 
         this.message = message;
         initUI();
@@ -28,17 +28,20 @@ public class ConfirmDialog extends BasicStage {
     void initUI() {
         confirmTextArea.setText(message);
     }
-    public Boolean getAnswser(){
+
+    public Boolean getAnswser() {
         return answer;
     }
+
     @FXML
     private void handleOkButton(ActionEvent event) {
         super.hide();
-        answer=Boolean.TRUE;
+        answer = Boolean.TRUE;
     }
-     @FXML
+
+    @FXML
     private void handleCancelButton(ActionEvent event) {
         super.hide();
-        answer=Boolean.FALSE;
+        answer = Boolean.FALSE;
     }
 }

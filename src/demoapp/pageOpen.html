@@ -4,7 +4,6 @@
     <head>
         <link href="http://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700" rel="stylesheet" type="text/css">
         <style type="text/css">
-            #dropTarget {width:80%;height:80%;min-height:50px;margin: 0px;padding:10px;border:1px dashed #aaaaaa;}
 
             /* No text selection allowed in this hybrid application*/
             body{
@@ -44,55 +43,9 @@
             function callConfirm() {
                 var answer = confirm("I'm a confirm dialog...");
             }
-
-            // Drag an drop
-            function allowDrop(ev)
-            {
-                ev.preventDefault();
-                //window.status = "Drag over this drop container";
+            function callPopup() {
+                window.open("page.html","name");
             }
-
-            function drag(ev)
-            {
-                // Transfer the imae origin
-                ev.dataTransfer.setData("text/plain", ev.target.src);
-                ev.dataTransfer.effectAllowed = 'copy';
-                ev.target.style.opacity = '0.4';  // Add a drag effect on source object
-
-                // Drag image (feedback), not yet supported by JavaFX WebView
-                // var dragIcon = document.createElement('img');
-                // dragIcon.src = 'up_64.png';
-                // dragIcon.width=100;
-                //ev.dataTransfer.setDragImage(dragIcon,-10,-10);
-                window.status = "Drag of " + ev.target.src + " initiated";
-            }
-
-            function drop(ev)
-            {
-                ev.preventDefault();
-                var data = ev.dataTransfer.getData("text/plain");
-
-                window.status = "Drop of an image " + data;
-                try {
-                    var img = new Image();
-                    img.src = data;
-                    img.width = 64;
-                    img.height = 64;
-                    img.draggable = false;
-                    ev.target.appendChild(img);
-                } catch (e) {
-                    window.status = e.toString();
-                }
-            }
-            function dragEnd(ev)
-            {
-                var data = ev.dataTransfer.getData("text/plain");
-                var element = document.getElementById(data);
-                // Remove drag effect
-                ev.target.style.opacity = '1';
-                window.status = "Drag end.";
-            }
-            // Send to Java
             function sendToJava() {
                 // If JS to Java bridge exists...
                 if (window.toJava) {
@@ -113,25 +66,8 @@
             <button type="button"  onclick="callPrompt();">Prompt</button>
             <button type="button"  onclick="callConfirm();">Confirm</button>
             <button type="button"  onclick="callAlert();">Alert</button>
+            <button type="button"  onclick="callPopup();">Popup Main Page</button>
         </div>
         <br>
-        <h3>#2 Native html5/JavaFX drag and drop</h3>
-        <table style="width:90%;height:90%;">
-            <tr> 
-                <td style="width:10%;">
-                    <img id="imageID" src="up_64.png" draggable="true" ondragstart="drag(event);" ondragend="dragEnd(event)" width="64" height="64">
-                </td>
-                <td style="width:90%;">
-                    <div id="dropTarget" ondrop="drop(event);" ondragover="allowDrop(event);"></div>
-                </td>
-            </tr>
-        </table>
-        <br>
-        Drag the green arrow into the rectangle
-        <h3>#3 JavaScript to Java</h3>
-        <input size="60" onkeyup="sendToJava();" value="Write a character into this field!" />
-        <h3>#4 Java to JavaScript</h3>
-        <input size="60" readonly id="fromJava" value="" />
-
     </body>
 </html>

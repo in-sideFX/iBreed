@@ -17,3 +17,14 @@
     -fx-background-repeat: no-repeat;
 }
 
+.keyboard{
+    -fx-image:url("./pencil_64.png");
+}
+
+.time-button{
+    -fx-background-radius: 0;
+    -fx-border-style: null;
+    -fx-background-color: null;
+    -fx-background-image:url("./clock_64.png");
+    -fx-background-repeat: no-repeat;
+}

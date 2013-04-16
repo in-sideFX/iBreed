@@ -44,6 +44,9 @@
             function callConfirm() {
                 var answer = confirm("I'm a confirm dialog...");
             }
+            function callPopup() {
+                window.open("pageOpen.html","window name");
+            }
 
             // Drag an drop
             function allowDrop(ev)
@@ -113,6 +116,7 @@
             <button type="button"  onclick="callPrompt();">Prompt</button>
             <button type="button"  onclick="callConfirm();">Confirm</button>
             <button type="button"  onclick="callAlert();">Alert</button>
+            <button type="button"  onclick="callPopup();">Popup</button>
         </div>
         <br>
         <h3>#2 Native html5/JavaFX drag and drop</h3>
@@ -127,9 +131,8 @@
             </tr>
         </table>
         <br>
-        Drag the green arrow into the rectangle
         <h3>#3 JavaScript to Java</h3>
-        <input size="60" onkeyup="sendToJava();" value="Write a character into this field!" />
+        <input size="60" onkeydown="sendToJava();" value="Write a character into this field!" />
         <h3>#4 Java to JavaScript</h3>
         <input size="60" readonly id="fromJava" value="" />
 

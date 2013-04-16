@@ -12,7 +12,7 @@
   <children>
     <ImageView fitHeight="60.0" fitWidth="60.0" layoutX="14.0" layoutY="26.0" pickOnBounds="true" preserveRatio="true">
       <image>
-        <Image url="@../alert/AlertDialog.png" />
+        <Image url="@ConfirmDialog.png" />
       </image>
     </ImageView>
     <Button id="okButton" defaultButton="true" minWidth="80.0" mnemonicParsing="false" onAction="#handleOkButton" text="%button.ok" AnchorPane.bottomAnchor="9.0" AnchorPane.rightAnchor="111.0" />

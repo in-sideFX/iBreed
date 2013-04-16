@@ -25,11 +25,12 @@
  (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package insidefx.ibreed;
+package demoapp;
 
+import insidefx.ibreed.JavaScriptBridge;
+import insidefx.ibreed.WebViewInjector;
 import insidefx.undecorator.Undecorator;
 import insidefx.undecorator.UndecoratorScene;
-import javafx.animation.FadeTransition;
 import javafx.animation.FillTransition;
 import javafx.application.Application;
 import static javafx.application.Application.launch;
@@ -58,9 +59,10 @@ public class IBreedSkeleton extends Application {
     private WebView webView;
     @FXML
     private TextField urlTxt;
-    @FXML
+
     UndecoratorScene undecoratorScene;
-    private FadeTransition fadeInTransition, fadeOutTransition;
+    
+    // The bridge object
     JavaScriptBridge javaScriptBridge;
 
     @Override
@@ -71,7 +73,6 @@ public class IBreedSkeleton extends Application {
             FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("ibreedskeleton.fxml"));
             fxmlLoader.setController(this);
             root = (Pane) fxmlLoader.load();
-            root.getStylesheets().add("jfxtras/css/JMetroLightTheme.css");
         } catch (Exception ex) {
             System.err.println(ex);
         }
@@ -114,16 +115,17 @@ public class IBreedSkeleton extends Application {
     }
 
     /**
-     * Customize the user interface
-     *
+     * Customize the user interface for hybrid application
+     * 
      * @param stage
      */
     public void setAsHybrid(Stage stage) {
         // The generic object for JS and JavaFX interop
         javaScriptBridge = new JavaScriptBridge(webView.getEngine());
         javaScriptBridge.fromJSProperty.addListener(new ChangeListener<String>() {
-            FillTransition fillTransition;
-
+            /**
+             * Invoked when JavaScript send a message
+             */
             @Override
             public void changed(ObservableValue<? extends String> ov, String t, String t1) {
                 System.out.println("Something changed on Java Script side...");
@@ -131,8 +133,8 @@ public class IBreedSkeleton extends Application {
         });
 
         // Inject WebView customizations (handlers...)
-        WebViewInjector.customize(stage, webView, javaScriptBridge);
-
+        WebViewInjector.inject(stage, webView, javaScriptBridge);
+   
         // Default URL to load
         final String url = getClass().getResource("page_skeleton.html").toExternalForm();
         webView.getEngine().load(url);
