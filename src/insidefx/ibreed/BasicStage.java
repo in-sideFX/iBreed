@@ -16,7 +16,7 @@ import javafx.stage.WindowEvent;
 
 /**
  * Basic Dialog
- *
+ * Root stage for all popup that brings unique look and behavior.
  * @author arnaud nouard
  */
 abstract public class BasicStage extends Stage {

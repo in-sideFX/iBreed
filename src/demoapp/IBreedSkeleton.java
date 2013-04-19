@@ -124,7 +124,7 @@ public class IBreedSkeleton extends Application {
         javaScriptBridge = new JavaScriptBridge(webView.getEngine());
         javaScriptBridge.fromJSProperty.addListener(new ChangeListener<String>() {
             /**
-             * Invoked when JavaScript send a message
+             * Invoked when JavaScript sends a new message
              */
             @Override
             public void changed(ObservableValue<? extends String> ov, String t, String t1) {

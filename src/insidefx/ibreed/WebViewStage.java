@@ -7,7 +7,7 @@ import javafx.stage.Modality;
 import javafx.stage.Window;
 
 /**
- * A simple WebView in an "Undecorator" stage
+ * A simple WebView with an "Undecorator" stage
  *
  * @author arnaud nouard
  */
@@ -30,7 +30,7 @@ public class WebViewStage extends BasicStage {
         show();
     }
 
-    protected void setAsHybrid() {
+    protected final void setAsHybrid() {
         WebViewInjector.inject(this, webView, null);
     }
 

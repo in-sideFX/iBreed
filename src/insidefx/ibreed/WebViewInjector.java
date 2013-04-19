@@ -27,7 +27,6 @@
  */
 package insidefx.ibreed;
 
-import demoapp.IBreed;
 import insidefx.ibreed.alert.AlertDialog;
 import insidefx.ibreed.confirm.ConfirmDialog;
 import insidefx.ibreed.prompt.PromptDialog;
@@ -52,7 +51,7 @@ import netscape.javascript.JSObject;
 
 /**
  * WebView helper
- *
+ * Manage all handlers, JS 2 Java bridge, page loading
  * @author arnaud nouard
  */
 public class WebViewInjector {
@@ -127,6 +126,7 @@ public class WebViewInjector {
         webEngine.setOnStatusChanged(new EventHandler<WebEvent<String>>() {
             @Override
             public void handle(WebEvent<String> t) {
+                // TODO: Fire event
                 System.out.println(t.toString());
             }
         });
@@ -165,7 +165,8 @@ public class WebViewInjector {
                 if (newState == Worker.State.SUCCEEDED) {
                     try {
                         if (js2JavaBridge != null) {
-                            // Inject Java Script to Java bridge object
+                            // Inject Java Script to Java bridge object automatically
+                            // “window.toJava” 
                             JSObject win = (JSObject) webEngine.executeScript("window");
                             win.setMember("toJava", js2JavaBridge);
 

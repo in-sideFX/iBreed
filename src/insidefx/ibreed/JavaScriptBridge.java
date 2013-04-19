@@ -4,7 +4,7 @@ import javafx.beans.property.SimpleStringProperty;
 import javafx.scene.web.WebEngine;
 
 /**
- *  Generic Java 2 JavaSCript bridge
+ *  Generic 2 ways communication bridge (JavaScript 2 Java and vice versa)
  */
 public class JavaScriptBridge {
 
