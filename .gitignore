@@ -3,5 +3,5 @@ build
 blog.txt
 !\nbproject\private\
 nbproject\private\private.properties
-
+.DS_Store
 /nbproject/private/
