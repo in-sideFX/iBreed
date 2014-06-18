@@ -70,12 +70,12 @@ public class WebViewInjector {
         webView.setVisible(false);
         webView.setFontSmoothingType(FontSmoothingType.LCD);
 
-        webView.setOnTouchMoved(new EventHandler<TouchEvent>() {
-            @Override
-            public void handle(TouchEvent t) {
-                System.err.print(" touched ");
-            }
-        });
+//        webView.setOnTouchMoved(new EventHandler<TouchEvent>() {
+//            @Override
+//            public void handle(TouchEvent t) {
+//               // System.err.print(" touched ");
+//            }
+//        });
         // Gestures
         webView.setOnSwipeLeft(new EventHandler<SwipeEvent>() {
             @Override
@@ -179,7 +179,7 @@ public class WebViewInjector {
             @Override
             public void handle(WebEvent<String> t) {
                 // TODO: Fire event
-                System.out.println(t.toString());
+                //System.out.println(t.toString());
             }
         });
         /*
