@@ -47,12 +47,12 @@ import javafx.scene.web.WebView;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 
-/**
- *
- * Hybrid skeleton for JavaFX/HTML applications
- *
- * @author arnaud nouard (In-SideFX blog)
- */
+    /**
+     *
+     * Hybrid skeleton for JavaFX/HTML applications
+     *
+     * @author arnaud nouard (In-SideFX blog)
+     */
 public class IBreedSkeleton extends Application {
 
     @FXML

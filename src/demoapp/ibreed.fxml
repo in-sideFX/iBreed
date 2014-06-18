@@ -11,7 +11,7 @@
 <?import javafx.scene.shape.*?>
 <?import javafx.scene.web.*?>
 
-<BorderPane id="BorderPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="450.0" minWidth="550.0" prefHeight="480.0" prefWidth="600.0" xmlns:fx="http://javafx.com/fxml">
+<BorderPane id="BorderPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="470.0" minWidth="570.0" prefHeight="480.0" prefWidth="600.0" style="-fx-background-color:transparent" xmlns:fx="http://javafx.com/fxml">
   <center>
     <WebView fx:id="webView" minHeight="300.0" minWidth="300.0" prefHeight="400.0" prefWidth="640.0">
       <BorderPane.margin>
@@ -48,7 +48,7 @@
   <top>
     <TextField fx:id="urlTxt" onAction="#onUrlTxtChanged" prefWidth="200.0">
       <BorderPane.margin>
-        <Insets left="40.0" right="100.0" />
+        <Insets left="40.0" right="140.0" />
       </BorderPane.margin>
     </TextField>
   </top>

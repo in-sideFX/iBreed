@@ -300,7 +300,7 @@ public class IBreed extends Application {
     private void handleDragDropped(DragEvent event) {
         dragMeFX.setOpacity(1); // Remove drag effect
     }
-
+    @FXML
     private void handleDragDone(DragEvent event) {
         dragMeFX.setOpacity(1); // Remove drag effect
     }

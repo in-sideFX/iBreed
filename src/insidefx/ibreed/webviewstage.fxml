@@ -10,7 +10,7 @@
 <?import javafx.scene.shape.*?>
 <?import javafx.scene.web.*?>
 
-<BorderPane id="BorderPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="350.0" minWidth="300.0" prefHeight="400.0" prefWidth="550.0" xmlns:fx="http://javafx.com/fxml">
+<BorderPane id="BorderPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="350.0" minWidth="300.0" prefHeight="400.0" prefWidth="550.0" style="-fx-background-color:transparent;&#10;" xmlns:fx="http://javafx.com/fxml">
   <center>
     <WebView fx:id="webView" minHeight="300.0" minWidth="300.0" prefHeight="400.0" prefWidth="640.0">
       <BorderPane.margin>

@@ -31,7 +31,7 @@
   <top>
     <TextField fx:id="urlTxt" onAction="#onUrlTxtChanged" prefWidth="200.0">
       <BorderPane.margin>
-        <Insets left="40.0" right="100.0" />
+        <Insets left="40.0" right="140.0" />
       </BorderPane.margin>
     </TextField>
   </top>

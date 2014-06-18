@@ -8,7 +8,7 @@
 <?import javafx.scene.paint.*?>
 <?scenebuilder-preview-i18n-resource PromptDialog.properties?>
 
-<AnchorPane id="AnchorPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="150.0" minWidth="450.0" prefHeight="170.0" prefWidth="500.0" xmlns:fx="http://javafx.com/fxml">
+<AnchorPane id="AnchorPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="150.0" minWidth="450.0" prefHeight="170.0" prefWidth="500.0" style="-fx-background-color:transparent;" xmlns:fx="http://javafx.com/fxml">
   <children>
     <ImageView fitHeight="60.0" fitWidth="60.0" layoutX="14.0" layoutY="26.0" pickOnBounds="true" preserveRatio="true">
       <image>

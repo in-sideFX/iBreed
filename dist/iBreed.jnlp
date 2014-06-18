@@ -11,8 +11,8 @@
   </resources>
   <resources>
     <j2se version="1.6+" href="http://java.sun.com/products/autodl/j2se"/>
-    <jar href="iBreed.jar" size="112811" download="eager" />
-    <jar href="lib/Undecorator.jar" size="83892" download="eager" />
+    <jar href="iBreed.jar" size="103793" download="eager" />
+    <jar href="lib/Undecorator.jar" size="81614" download="eager" />
   </resources>
   <applet-desc  width="800" height="600" main-class="com.javafx.main.NoJavaFXFallback"  name="iBreed" >
     <param name="requiredFXVersion" value="2.2+"/>

@@ -57,7 +57,7 @@
 
             function drag(ev)
             {
-                // Transfer the imae origin
+                // Transfer the image origin
                 ev.dataTransfer.setData("text/plain", ev.target.src);
                 ev.dataTransfer.effectAllowed = 'copy';
                 ev.target.style.opacity = '0.4';  // Add a drag effect on source object

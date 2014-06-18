@@ -15,13 +15,18 @@ public class WebViewStage extends BasicStage {
 
     @FXML
     private WebView webView;
-    static final public int WINDOW_OFFSET=35;
-    
-    public WebViewStage(Window owner) {
-        super(null, "webviewstage.fxml", null, Modality.NONE);  // No owner since new Stage
+    static final public int WINDOW_OFFSET = 35;
+    String customCSS;
 
+    public WebViewStage(Window owner) {
+        this(owner, null);
+    }
+
+    public WebViewStage(Window owner, String css) {
+        super(null, "webviewstage.fxml", null, Modality.NONE);  // No owner since new Stage
+        customCSS = css;
         setAsHybrid();
-        
+
         // Add offset to avoid superpostion
         double x = owner.getX();
         double y = owner.getY();
@@ -31,7 +36,7 @@ public class WebViewStage extends BasicStage {
     }
 
     protected final void setAsHybrid() {
-        WebViewInjector.inject(this, webView, null);
+        WebViewInjector.inject(this, webView, null, customCSS);
     }
 
     public WebView getWebView() {

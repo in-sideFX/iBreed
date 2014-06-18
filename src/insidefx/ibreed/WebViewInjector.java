@@ -39,6 +39,8 @@ import javafx.beans.value.ObservableValue;
 import javafx.concurrent.Worker;
 import javafx.event.EventHandler;
 import javafx.geometry.Rectangle2D;
+import javafx.scene.input.SwipeEvent;
+import javafx.scene.input.TouchEvent;
 import javafx.scene.text.FontSmoothingType;
 import javafx.scene.web.PopupFeatures;
 import javafx.scene.web.PromptData;
@@ -50,8 +52,8 @@ import javafx.util.Callback;
 import netscape.javascript.JSObject;
 
 /**
- * WebView helper
- * Manage all handlers, JS 2 Java bridge, page loading
+ * WebView helper Manage all handlers, JS 2 Java bridge, page loading
+ *
  * @author arnaud nouard
  */
 public class WebViewInjector {
@@ -59,10 +61,40 @@ public class WebViewInjector {
     static final Logger LOGGER = Logger.getLogger("iBreed");
 
     public static void inject(final Stage stage, final WebView webView, final JavaScriptBridge js2JavaBridge) {
+        inject(stage, webView, js2JavaBridge, null);
+    }
+
+    public static void inject(final Stage stage, final WebView webView, final JavaScriptBridge js2JavaBridge, final String customCSS) {
         // Default settings
         webView.setContextMenuEnabled(false);
         webView.setVisible(false);
         webView.setFontSmoothingType(FontSmoothingType.LCD);
+
+        webView.setOnTouchMoved(new EventHandler<TouchEvent>() {
+            @Override
+            public void handle(TouchEvent t) {
+                System.err.print(" touched ");
+            }
+        });
+        // Gestures
+        webView.setOnSwipeLeft(new EventHandler<SwipeEvent>() {
+            @Override
+            public void handle(SwipeEvent t) {
+                WebEngine engine = webView.getEngine();
+                if (engine.getHistory().getCurrentIndex() > 0) {
+                    engine.getHistory().go(engine.getHistory().getCurrentIndex() - 1);
+                }
+            }
+        });
+        webView.setOnSwipeRight(new EventHandler<SwipeEvent>() {
+            @Override
+            public void handle(SwipeEvent t) {
+                WebEngine engine = webView.getEngine();
+                if (engine.getHistory().getCurrentIndex() < engine.getHistory().getMaxSize()) {
+                    engine.getHistory().go(engine.getHistory().getCurrentIndex() + 1);
+                }
+            }
+        });
 
         // Disable menu
         final WebEngine webEngine = webView.getEngine();
@@ -86,6 +118,11 @@ public class WebViewInjector {
             @Override
             public Boolean call(String p) {
                 ConfirmDialog promptStage = new ConfirmDialog(stage, p);
+                  if (customCSS != null) {
+                    ((UndecoratorScene) promptStage.getScene()).removeDefaultStylesheet();
+                    ((UndecoratorScene) promptStage.getScene()).getUndecorator().getStylesheets().add(customCSS);    // For background color
+                    ((UndecoratorScene) promptStage.getScene()).getUndecorator().getStageDecorationNode().getStylesheets().add(customCSS); // For decoration
+                }
                 promptStage.showAndWait();
                 return promptStage.getAnswser();
             }
@@ -96,9 +133,14 @@ public class WebViewInjector {
         webEngine.setCreatePopupHandler(new Callback<PopupFeatures, WebEngine>() {
             @Override
             public WebEngine call(PopupFeatures p) {
-                WebViewStage webViewStage = new WebViewStage(stage);
+                WebViewStage webViewStage = new WebViewStage(stage,customCSS);
                 webViewStage.setResizable(p.isResizable());
                 webViewStage.getWebView().setContextMenuEnabled(p.hasMenu());
+                if (customCSS != null) {
+                    ((UndecoratorScene) webViewStage.getScene()).removeDefaultStylesheet();
+                    ((UndecoratorScene) webViewStage.getScene()).getUndecorator().getStylesheets().add(customCSS);    // For background color
+                    ((UndecoratorScene) webViewStage.getScene()).getUndecorator().getStageDecorationNode().getStylesheets().add(customCSS); // For decoration
+                }
                 return webViewStage.getWebEngine();
             }
         });
@@ -109,6 +151,11 @@ public class WebViewInjector {
             @Override
             public void handle(WebEvent<String> msg) {
                 AlertDialog alertStage = new AlertDialog(stage, msg.getData());
+              if (customCSS != null) {
+                    ((UndecoratorScene) alertStage.getScene()).removeDefaultStylesheet();
+                    ((UndecoratorScene) alertStage.getScene()).getUndecorator().getStylesheets().add(customCSS);    // For background color
+                    ((UndecoratorScene) alertStage.getScene()).getUndecorator().getStageDecorationNode().getStylesheets().add(customCSS); // For decoration
+                }
                 alertStage.show();
             }
         });
@@ -119,6 +166,11 @@ public class WebViewInjector {
             @Override
             public String call(PromptData p) {
                 PromptDialog promptStage = new PromptDialog(stage, p.getMessage(), p.getDefaultValue());
+               if (customCSS != null) {
+                    ((UndecoratorScene) promptStage.getScene()).removeDefaultStylesheet();
+                    ((UndecoratorScene) promptStage.getScene()).getUndecorator().getStylesheets().add(customCSS);    // For background color
+                    ((UndecoratorScene) promptStage.getScene()).getUndecorator().getStageDecorationNode().getStylesheets().add(customCSS); // For decoration
+                }
                 promptStage.showAndWait();
                 return promptStage.getPromptText();
             }
